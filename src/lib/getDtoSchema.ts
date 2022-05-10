@@ -11,6 +11,9 @@ export const getDtoSchema = <T extends Constructor<any>>(
 
   for (const [propertyName, params] of map) {
     const property = params.prop ?? propertyName;
+
+    // console.log('property??????', params.prop, propertyName);
+
     keys[property] = params.joiSchema ?? Joi.any();
   }
 

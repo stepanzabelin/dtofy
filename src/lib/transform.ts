@@ -117,7 +117,11 @@ const toObject = (value: any, defaultValue?: any) => {
   return defaultValue ?? {};
 };
 
-const toType = (value: any, type: TypeValue, defaultValue?: any): any => {
+export const toType = (
+  value: any,
+  type: TypeValue,
+  defaultValue?: any
+): any => {
   switch (true) {
     case type === Number: {
       return toNumber(value, defaultValue);
