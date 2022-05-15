@@ -1,20 +1,20 @@
-import { dtoPropMetadata } from '../metadata';
 import { Constructor, TypeValue } from '../types';
+import { toDto } from './toType';
 
 export const map = <T extends Constructor | Array<Constructor>>(
-  dtoOrArr: T,
-  defaultValue?: TypeValue
+  dtoOrArr: T
 ): ((
-  raw: any
+  raw: any,
+  defaultValue?: TypeValue
 ) => T extends Array<Constructor>
   ? T[number]['prototype'][]
   : T extends Constructor
   ? T['prototype']
   : any) => {
-  return (raw: any) => {
+  return (raw: any, defaultValue?: TypeValue) => {
     if (Array.isArray(dtoOrArr)) {
       if (Array.isArray(raw)) {
-        return raw.map(map(dtoOrArr[0], defaultValue));
+        return raw.map((value) => map(dtoOrArr[0])(value, defaultValue));
       } else {
         return [];
       }
@@ -22,34 +22,4 @@ export const map = <T extends Constructor | Array<Constructor>>(
       return toDto(raw, dtoOrArr, defaultValue);
     }
   };
-};
-
-const toDto = (raw: any, dto: Constructor, defaultValue: TypeValue) => {
-  if (raw === undefined && defaultValue !== undefined) {
-    return defaultValue;
-  }
-  const rawObj = typeof raw === 'object' && raw !== null ? raw : {};
-
-  if (typeof dto !== 'function') {
-    return undefined;
-  }
-
-  return Object.fromEntries(
-    [...dtoPropMetadata.get(dto.prototype)].map(
-      ([key, { type, prop, isThis }]) => {
-        const value = isThis ? rawObj : rawObj[prop || key];
-        let result;
-        if (Array.isArray(type)) {
-          if (Array.isArray(value)) {
-            result = value.map(map((type as any[])[0]));
-          } else {
-            result = defaultValue ?? [];
-          }
-        } else {
-          result = value === undefined ? defaultValue : value;
-        }
-        return [key, result];
-      }
-    )
-  ) as any;
 };

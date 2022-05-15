@@ -9,6 +9,7 @@ export type DtoPropMetadataData = {
   joiSchema?: Joi.Schema;
   type?: TypeValue;
   isThis?: boolean;
+  defaultValue?: any;
 };
 
 export const dtoPropMetadata = {

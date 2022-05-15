@@ -1,55 +1,38 @@
-import { dtoPropMetadata } from '../metadata';
 import { Constructor, TypeValue } from '../types';
+import { dtoPropMetadata } from '../metadata';
 
-export const transform = <T extends Constructor | Array<Constructor>>(
-  dtoOrArr: T,
-  defaultValue?: TypeValue
-): ((
-  raw: any
-) => T extends Array<Constructor>
-  ? T[number]['prototype'][]
-  : T extends Constructor
-  ? T['prototype']
-  : any) => {
-  return (raw: any) => {
-    if (Array.isArray(dtoOrArr)) {
-      if (Array.isArray(raw)) {
-        return raw.map(transform(dtoOrArr[0], defaultValue));
-      } else {
-        return [];
-      }
-    } else {
-      return toDto(raw, dtoOrArr, defaultValue);
-    }
-  };
-};
-
-const toDto = (raw: any, dto: Constructor, defaultValue: TypeValue) => {
+export const toDto = (raw: any, dto: Constructor, defaultValue?: TypeValue) => {
   if (raw === undefined && defaultValue !== undefined) {
     return defaultValue;
   }
+
   const rawObj = typeof raw === 'object' && raw !== null ? raw : {};
 
   if (typeof dto !== 'function') {
-    return raw;
+    return undefined;
   }
-
-  const defaults = new dto.prototype.constructor();
 
   return Object.fromEntries(
     [...dtoPropMetadata.get(dto.prototype)].map(
-      ([key, { type, prop, isThis }]) => {
-        const defaultValue = defaults[key];
+      ([key, { type, prop, defaultValue, isThis }]) => {
         const value = isThis ? rawObj : rawObj[prop || key];
+
         let result;
+
+        console.log('dto', dto, key, dto.prototype[key], new dto());
+
         if (Array.isArray(type)) {
           if (Array.isArray(value)) {
-            result = value.map(transform((type as any[])[0]));
+            result = value.map((subValue: any) =>
+              toType(subValue, type[0], defaultValue)
+            );
           } else {
-            result = defaultValue ?? [];
+            result = toType(value, type, []);
           }
-        } else {
+        } else if (type !== undefined) {
           result = toType(value, type, defaultValue);
+        } else {
+          result = value;
         }
         return [key, result];
       }
@@ -63,7 +46,7 @@ const toNumber = (value: any, defaultValue?: any) => {
   }
 
   if (value === undefined) {
-    return defaultValue ?? 0;
+    return defaultValue === undefined ? 0 : defaultValue;
   }
 
   const result = Number(value);
@@ -80,7 +63,7 @@ const toBigInt = (value: any, defaultValue?: any) => {
   }
 
   if (value === undefined) {
-    return defaultValue ?? BigInt(0);
+    return defaultValue === undefined ? BigInt(0) : defaultValue;
   }
 
   return BigInt(0);
@@ -92,7 +75,7 @@ const toString = (value: any, defaultValue?: any) => {
   }
 
   if (value === undefined) {
-    return defaultValue ?? '';
+    return defaultValue === undefined ? '' : defaultValue;
   }
 
   return String(value);
@@ -104,7 +87,7 @@ const toBoolean = (value: any, defaultValue?: any) => {
   }
 
   if (value === undefined) {
-    return defaultValue ?? false;
+    return defaultValue === undefined ? false : defaultValue;
   }
 
   return Boolean(value);
@@ -114,7 +97,7 @@ const toObject = (value: any, defaultValue?: any) => {
   if (typeof value === 'object' && value !== null) {
     return value;
   }
-  return defaultValue ?? {};
+  return defaultValue === undefined ? {} : defaultValue;
 };
 
 export const toType = (
