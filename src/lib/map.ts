@@ -16,7 +16,7 @@ export const map = <T extends Constructor | Array<Constructor>>(
       if (Array.isArray(raw)) {
         return raw.map((value) => map(dtoOrArr[0])(value, defaultValue));
       } else {
-        return [];
+        return defaultValue === undefined ? [] : defaultValue;
       }
     } else {
       return toDto(raw, dtoOrArr, defaultValue);
