@@ -4,7 +4,7 @@ import { TypeValue } from '../types';
 
 export const METADATA_DTO_PROPERTY_KEY = Symbol('Dto property key');
 
-export type DtoPropMetadataData = {
+export type PropMetadata = {
   prop?: string;
   joiSchema?: Joi.Schema;
   type?: TypeValue;
@@ -16,34 +16,34 @@ export const dtoPropMetadata = {
   merge(
     target: Constructor['prototype'],
     propertyName: string,
-    data: DtoPropMetadataData
+    data: PropMetadata
   ) {
     const map = this.get(target);
     map.set(propertyName, { ...map.get(propertyName), ...data });
     this.set(target, map);
   },
 
-  set(target: Constructor['prototype'], map: Map<string, DtoPropMetadataData>) {
+  set(target: Constructor['prototype'], map: Map<string, PropMetadata>) {
     Reflect.defineMetadata(METADATA_DTO_PROPERTY_KEY, map, target);
   },
 
-  get(target: Constructor['prototype']): Map<string, DtoPropMetadataData> {
+  get(target: Constructor['prototype']): Map<string, PropMetadata> {
     return Reflect.getMetadata(METADATA_DTO_PROPERTY_KEY, target) ?? new Map();
   },
 
   getData(
     target: Constructor['prototype'],
     propertyName: string
-  ): DtoPropMetadataData | undefined {
+  ): PropMetadata | undefined {
     const map = this.get(target);
     return map.get(propertyName);
   },
 
-  getValue<P extends keyof DtoPropMetadataData>(
+  getValue<P extends keyof PropMetadata>(
     target: Constructor['prototype'],
     propertyName: string,
     param: P
-  ): DtoPropMetadataData[P] | undefined {
+  ): PropMetadata[P] | undefined {
     return this.getData(target, propertyName)?.[param];
   },
 };

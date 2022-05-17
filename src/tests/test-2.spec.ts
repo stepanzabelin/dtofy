@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { getClassSchema, map, validateDtoSchema } from '../index';
-import { getDtoProps } from '../lib/getDtoProps';
+// import { getDtoProps } from '../lib/getDtoProps';
 import { unmap } from '../lib/unmap';
 import { MongoConnectWithJoiDto } from '../test-env/MongoConnectWithJoiDto';
 
@@ -65,6 +65,6 @@ describe('Args parser222', () => {
       })
     );
 
-    console.log('unmap', getDtoProps(MongoConnectWithJoiDto));
+    // console.log('unmap', getDtoProps(MongoConnectWithJoiDto));
   });
 });

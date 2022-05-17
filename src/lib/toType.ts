@@ -16,33 +16,18 @@ export const toDto = (raw: any, dto: Constructor, defaultValue?: TypeValue) => {
     [...dtoPropMetadata.get(dto.prototype)].map(
       ([key, { type, prop, defaultValue, isThis }]) => {
         const value = isThis ? rawObj : rawObj[prop || key];
-
         let result;
 
-        // console.log('dto!!', dto, 'key', key, 'prop', prop, 'value', value);
-
         if (Array.isArray(type)) {
-          // console.log('Array.isArray(type)');
-
           if (Array.isArray(value)) {
-            // console.log('Array.isArray(value)');
-
-            result = value.map((subValue: any) =>
-              toType(subValue, type[0], defaultValue)
-            );
-
-            // console.log('result, result');
+            result = value.map((subValue: any) => toType(subValue, type[0]));
           } else {
-            result = toType(value, type, []);
-
-            // console.log('else1', result);
+            result = [];
           }
         } else if (type !== undefined) {
           result = toType(value, type, defaultValue);
-          // console.log('type !== undefined', result);
         } else {
           result = value;
-          // console.log('result = value', result);
         }
         return [key, result];
       }
