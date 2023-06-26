@@ -1,10 +1,9 @@
-import Joi from 'joi';
-import { getClassSchema, map, Prop, Type, validateDtoSchema } from '../index';
+import { map, Prop, Type } from '../index';
 import 'reflect-metadata';
 import { getPropsMetadata } from '../lib/getPropsMetadata';
 // import { map } from '../lib/map';
 import { Deep1 } from '../test-env/Deep1';
-import { MongoConnectWithJoiDto } from '../test-env/MongoConnectWithJoiDto';
+import { MongoConnectSimpleDto } from '../test-env/MongoConnectSimpleDto';
 import { inspect } from 'util';
 import { This } from '../decorators';
 class OriginalDeckDto {

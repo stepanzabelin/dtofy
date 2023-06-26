@@ -1,4 +1,3 @@
-import Joi from 'joi';
 import { Prop, Type } from '../decorators';
 import { Deep2 } from './Deep2';
 

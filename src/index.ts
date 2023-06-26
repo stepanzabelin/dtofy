@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-export * from './lib/validateDtoSchema';
-export * from './lib/getClassSchema';
+// export * from './lib/validateDtoSchema';
+// export * from './lib/getClassSchema';
 export * from './lib/map';
 // export * from './lib/unmap';
 export * from './lib/getPropsMap';

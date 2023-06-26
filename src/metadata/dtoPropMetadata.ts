@@ -1,4 +1,3 @@
-import Joi from 'joi';
 import { Constructor } from '../types';
 import { TypeValue } from '../types';
 
@@ -6,7 +5,6 @@ export const METADATA_DTO_PROPERTY_KEY = Symbol('Dto property key');
 
 export type PropMetadata = {
   prop?: string;
-  joiSchema?: Joi.Schema;
   type?: TypeValue;
   isThis?: boolean;
   defaultValue?: any;
